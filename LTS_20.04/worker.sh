@@ -7,7 +7,7 @@ default_interface=$(ip route show default | awk '{print $5}')
 ip_address=$(ip addr show $default_interface | awk '/inet/ {print $2}')
 
 ip_address_short=$(echo "$ip_address" | cut -d'/' -f1 |head -n 1)
-echo "$ip_address_short $hostname" | sudo tee -a /etc/hosts
+echo "$ip_address_short $(hostname)" | sudo tee -a /etc/hosts
 echo "Enter Master ip"
 read master
 echo "$master master" | sudo tee -a /etc/hosts

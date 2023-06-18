@@ -19,7 +19,7 @@ fi
 echo "Underlay network is $underlay and Overlay network is $overlay"
 
 ip_address_short=$(echo "$ip_address" | cut -d'/' -f1 |head -n 1)
-echo "$ip_address_short $hostname" | sudo tee -a /etc/hosts
+echo "$ip_address_short $(hostname)" | sudo tee -a /etc/hosts
 echo "how much workers you want to attach"
 read num
 
