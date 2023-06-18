@@ -7,12 +7,10 @@ default_interface=$(ip route show default | awk '{print $5}')
 ip_address=$(ip addr show $default_interface | awk '/inet/ {print $2}')
 
 ip_address_short=$(echo "$ip_address" | cut -d'/' -f1 |head -n 1)
-#sudo echo "$ip_address_short worker" >> /etc/hosts
-echo "$ip_address_short worker" | sudo tee -a /etc/hosts
+echo "$ip_address_short $hostname" | sudo tee -a /etc/hosts
 
 echo "Enter Master ip"
 read master
-#sudo echo "$master master" >> /etc/hosts
 echo "$master master" | sudo tee -a /etc/hosts
 
 sudo swapoff -a
@@ -38,7 +36,6 @@ sudo apt-get update
 sudo apt-get install -y apt-transport-https ca-certificates curl
 sudo mkdir /etc/apt/keyrings
 sudo curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
-echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 sudo curl -fsSL "https://packages.cloud.google.com/apt/doc/apt-key.gpg" | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/kubernetes-archive-keyring.gpg
 sudo sh -c "echo 'deb https://packages.cloud.google.com/apt kubernetes-xenial main' > /etc/apt/sources.list.d/kubernetes.list"
 sudo apt-get update

@@ -19,8 +19,7 @@ fi
 echo "Underlay network is $underlay and Overlay network is $overlay"
 
 ip_address_short=$(echo "$ip_address" | cut -d'/' -f1 |head -n 1)
-#sudo echo "$ip_address_short master" >> /etc/hosts
-echo "$ip_address_short master" | sudo tee -a /etc/hosts
+echo "$ip_address_short $hostname" | sudo tee -a /etc/hosts
 echo "how much workers you want to attach"
 read num
 
@@ -29,8 +28,7 @@ if [[ $num -gt 0 ]]; then
     for i in $(seq 1 $num); do
         echo "enter ip of worker$i"
         read ip
-        #sudo echo "$ip worker" >> /etc/hosts
-        echo "$ip worker" | sudo tee -a /etc/hosts 
+        echo "$ip worker$i" | sudo tee -a /etc/hosts 
     done
 else
     echo "Please enter a valid number of workers."
@@ -59,7 +57,6 @@ sudo apt-get update
 sudo apt-get install -y apt-transport-https ca-certificates curl
 sudo mkdir /etc/apt/keyrings
 sudo curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
-echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 sudo curl -fsSL "https://packages.cloud.google.com/apt/doc/apt-key.gpg" | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/kubernetes-archive-keyring.gpg
 sudo sh -c "echo 'deb https://packages.cloud.google.com/apt kubernetes-xenial main' > /etc/apt/sources.list.d/kubernetes.list"
 sudo apt-get update
