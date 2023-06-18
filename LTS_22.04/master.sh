@@ -19,8 +19,8 @@ fi
 echo "Underlay network is $underlay and Overlay network is $overlay"
 
 ip_address_short=$(echo "$ip_address" | cut -d'/' -f1 |head -n 1)
-sudo echo "$ip_address_short master" >> /etc/hosts
-
+#sudo echo "$ip_address_short master" >> /etc/hosts
+echo "$ip_address_short master" | sudo tee -a /etc/hosts
 echo "how much workers you want to attach"
 read num
 
@@ -29,7 +29,8 @@ if [[ $num -gt 0 ]]; then
     for i in $(seq 1 $num); do
         echo "enter ip of worker$i"
         read ip
-        sudo echo "$ip worker" >> /etc/hosts
+        #sudo echo "$ip worker" >> /etc/hosts
+        echo "$ip worker" | sudo tee -a /etc/hosts 
     done
 else
     echo "Please enter a valid number of workers."
