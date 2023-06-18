@@ -5,6 +5,7 @@
 #Master
 
 ========================================================================
+
 #Step1:
 git clone https://github.com/malikbilalali1/kubernetes.git
 
@@ -24,7 +25,7 @@ chmod +x master.sh
 #Worker
 
 =========================================================================
-#Worker
+
 #Step1:
 git clone https://github.com/malikbilalali1/kubernetes.git
 
