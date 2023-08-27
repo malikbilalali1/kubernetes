@@ -1,5 +1,5 @@
 #!/bin/bash
-
+echo "WELCOME TO ONE CLICK MASTER SETUP"
 # Get the name of the default network interface
 default_interface=$(ip route show default | awk '{print $5}')
 
@@ -20,20 +20,20 @@ echo "Underlay network is $underlay and Overlay network is $overlay"
 
 ip_address_short=$(echo "$ip_address" | cut -d'/' -f1 |head -n 1)
 echo "$ip_address_short $(hostname)" | sudo tee -a /etc/hosts
-echo "how much workers you want to attach"
-read num
+while true; do
+    read -p "Enter the number of workers you want to attach: " num
 
-if [[ $num -gt 0 ]]; then
-    # Loop through the number of workers and print them
-    for i in $(seq 1 $num); do
-        echo "enter ip of worker$i"
-        read ip
-        echo "$ip worker$i" | sudo tee -a /etc/hosts 
-    done
-else
-    echo "Please enter a valid number of workers."
-fi
-
+    if [[ $num -gt 0 ]]; then
+        for i in $(seq 1 $num); do
+            echo "Enter the IP of worker $i:"
+            read ip
+            echo "$ip worker$i" | sudo tee -a /etc/hosts 
+        done
+        break  # Exit the loop if a valid number of workers is entered
+    else
+        echo "Please enter a valid number of workers."
+    fi
+done
 sudo swapoff -a
 sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
