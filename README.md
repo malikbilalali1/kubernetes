@@ -31,9 +31,12 @@ chmod +x master.sh
 git clone https://github.com/malikbilalali1/kubernetes.git
 
 #Step2:
-cd kubernetes/LTS_20.04 
+cd kubernetes/LTS_20.04  #for ubuntu 20.04
 or
-cd kubernetes/LTS_22.04
+cd kubernetes/LTS_22.04  #for ubuntu 22.04
+or
+cd kubernetes/centos     #for centos
+
 
 #Step3:
 chmod +x worker.sh
