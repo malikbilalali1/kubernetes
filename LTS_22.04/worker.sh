@@ -14,7 +14,7 @@ read master
 echo "$master master" | sudo tee -a /etc/hosts
 
 sudo swapoff -a
-sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+sudo sed -ri '/\sswap\s/s/^#?/#/' /etc/fstab
 cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
 overlay
 br_netfilter
