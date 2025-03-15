@@ -15,23 +15,33 @@ else
     overlay="10.10.0.0/16"
 fi
 
-# Print the Networks
 echo "Underlay network is $underlay and Overlay network is $overlay"
 
 ip_address_short=$(echo "$ip_address" | cut -d'/' -f1 |head -n 1)
 echo "$ip_address_short $(hostname)" | sudo tee -a /etc/hosts
 while true; do
-    read -p "Enter the number of workers you want to attach: " num
-
-    if [[ $num -gt 0 ]]; then
-        for i in $(seq 1 $num); do
-            echo "Enter the IP of worker $i:"
-            read ip
-            echo "$ip worker$i" | sudo tee -a /etc/hosts 
-        done
-        break  # Exit the loop if a valid number of workers is entered
+    read -rp "Enter the number of workers (0 to skip): " num
+    if [[ ! $num =~ ^0$|^[1-9][0-9]*$ ]]; then
+        echo "Error: Please enter a valid number."
+        continue
+    fi
+    if [[ $num -eq 0 ]]; then
+        echo "No workers will be added to /etc/hosts"
+        break
     else
-        echo "Please enter a valid number of workers."
+        for ((i=1; i<=num; i++)); do
+            while true; do
+                read -rp "Enter the IP of worker $i: " ip
+                if [[ $ip =~ ^[0-9]{1,3}(\.[0-9]{1,3}){3}$ ]]; then
+                    echo "worker$i $ip" | sudo tee -a /etc/hosts >/dev/null
+                    break
+                else
+                    echo "Error: Invalid IP format. Please try again."
+                fi
+            done
+        done
+        echo "Successfully added $num worker(s) to /etc/hosts"
+        break
     fi
 done
 sudo swapoff -a
@@ -59,15 +69,12 @@ sudo mkdir /etc/apt/keyrings
 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
 sudo apt-get update
-sudo apt install -y kubelet=1.28.1-1.1 kubeadm=1.28.1-1.1 kubectl=1.28.1-1.1 docker.io
-sudo apt-mark hold kubelet kubeadm kubectl docker.io
+sudo apt install -y kubelet=1.28.1-1.1 kubeadm=1.28.1-1.1 kubectl=1.28.1-1.1 containerd
+sudo apt-mark hold kubelet kubeadm kubectl containerd
 sudo mkdir /etc/containerd
 sudo sh -c "containerd config default > /etc/containerd/config.toml"
-sudo systemctl restart containerd.service
-sudo systemctl restart kubelet.service
-sudo systemctl start docker.service
-sudo systemctl enable kubelet.service
-#sudo systemctl enable docker.service
+sudo systemctl enable containerd.service --now
+sudo systemctl enable kubelet.service --now
 sudo kubeadm config images pull
 sudo kubeadm init --pod-network-cidr=$overlay
 mkdir -p $HOME/.kube
