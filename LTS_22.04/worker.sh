@@ -43,11 +43,8 @@ sudo apt-mark hold kubelet kubeadm kubectl docker.io
 sudo mkdir /etc/containerd
 sudo sh -c "containerd config default > /etc/containerd/config.toml"
 sudo sed -i 's/            SystemdCgroup = false/            SystemdCgroup = true/' /etc/containerd/config.toml
-sudo systemctl restart containerd.service
-sudo systemctl restart kubelet.service
-sudo systemctl start docker.service
-sudo systemctl enable kubelet.service
-#sudo systemctl enable docker.service
+sudo systemctl enable containerd.service --now
+sudo systemctl enable kubelet.service --now
 echo "Enter master join token"
 read join
 sudo $join
