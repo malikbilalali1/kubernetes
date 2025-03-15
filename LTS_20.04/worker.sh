@@ -40,11 +40,8 @@ sudo apt install -y kubelet=1.28.1-1.1 kubeadm=1.28.1-1.1 kubectl=1.28.1-1.1 doc
 sudo apt-mark hold kubelet kubeadm kubectl docker.io
 sudo mkdir /etc/containerd
 sudo sh -c "containerd config default > /etc/containerd/config.toml"
-sudo systemctl restart containerd.service
-sudo systemctl restart kubelet.service
-sudo systemctl start docker.service
-sudo systemctl enable kubelet.service
-#sudo systemctl enable docker.service
+sudo systemctl enable containerd.service --now
+sudo systemctl enable kubelet.service --now
 echo "Enter master join token"
 read join
 sudo $join
